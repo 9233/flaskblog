@@ -63,8 +63,6 @@ def about():
 @main.route('/article/<name>.html', methods=['GET', 'POST'])
 def article(name):
     article = Article.query.filter_by(name=name).first()
-
-    print(article)
     if article is None:
         abort(404)
     article.vc = article.vc + 1
@@ -164,7 +162,7 @@ def search():
     return redirect(url_for('.search_results', query=g.search_form.search.data.strip()))
 
 
-@main.route('/search_results/<query>', methods=['GET', 'POST'])
+@main.route('/search_results/<query>.html', methods=['GET', 'POST'])
 def search_results(query):
     page = request.args.get('page', 1, type=int)
     articles = Article.query.filter(Article.content_html.like('%%%s%%' % query), Article.state == 1).order_by(Article.timestamp.desc()). \
