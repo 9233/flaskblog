@@ -39,11 +39,20 @@
                 <span class="mx-2" data-toggle="tooltip" data-placement="bottom" title=""
                     data-original-title="最后编辑于{{article.timestamp.strftime('%Y年%m月%d日')}}">{{article.timestamp.strftime("%Y年%m月%d日 %H:%M")}}</span>
                 <span class="mx-2">阅读 {{article.vc}}</span>
-                <!-- <a class="mx-2 to-com" href="#comment-block">评论 1</a> -->
             </div>
+
+
+                        <div class="article-body mt-4 f-17" style="line-height:1.8">
+                {{article.summary|safe}}
+            </div>
+
+*******************************************
+
             <div class="article-body mt-4 f-17" style="line-height:1.8">
                 {{article.content_html|hidden_content|safe}}
             </div>
+
+
             <blockquote class="p-1 f-14 mt-3" style="border-left: 4px solid #dc3545;">
                 <p class="m-1"><strong>版权声明：</strong>如无特殊说明，文章均为<a href="{{url_for('main.index')}}">flaskBlog</a>原创，转载请注明出处
                 </p>
