@@ -42,7 +42,7 @@ def index():
 def favicon():
     return main.send_static_file('img/favicon.ico')
 
-@main.route('/hot/',methods=['GET'])
+@main.route('/hot.html',methods=['GET'])
 def hot():
     page = request.args.get('page',1,type=int)
     articles = Article.query.filter_by(state=1). \
@@ -51,7 +51,7 @@ def hot():
     recommends = Recommend.query.filter(Recommend.state == 1).order_by(Recommend.sn.desc()).all()
     return render_template(build_template_path('index.html'),articles=articles, recommends = recommends)
 
-@main.route('/about/', methods=['GET', 'POST'])
+@main.route('/about.html', methods=['GET', 'POST'])
 def about():
     article = Article.query.filter(Article.name=='about-me').first()
     if article :
@@ -60,22 +60,24 @@ def about():
     return render_template(build_template_path('about.html'))
 
 
-@main.route('/article/<name>/', methods=['GET', 'POST'])
+@main.route('/article/<name>.html', methods=['GET', 'POST'])
 def article(name):
     article = Article.query.filter_by(name=name).first()
+
+    print(article)
     if article is None:
         abort(404)
     article.vc = article.vc + 1
     db.session.commit()
     return render_template(build_template_path('article.html'), article=article)
 
-@main.route('/tags/')
+@main.route('/tags.html')
 def tags():
     tags = Tag.query.all()
     return render_template(build_template_path('tags.html'),tags = tags)
 
 
-@main.route('/tag/<t>/', methods=['GET'])
+@main.route('/tag/<t>.html', methods=['GET'])
 def tag(t):
     page = request.args.get('page', 1, type=int)
     tag = Tag.query.filter(Tag.code == t).first()
@@ -84,7 +86,7 @@ def tag(t):
         paginate(page, per_page=current_app.config['FLASKBLOG_POST_PER_PAGE'], error_out=False)
     return render_template(build_template_path('tag.html'), articles=articles, tag=tag,orderby='time')
 
-@main.route('/tag/<t>/hot/', methods=['GET'])
+@main.route('/tag/<t>/hot.html', methods=['GET'])
 def tag_hot(t):
     page = request.args.get('page', 1, type=int)
     tag = Tag.query.filter(Tag.code == t).first()
@@ -94,7 +96,7 @@ def tag_hot(t):
     return render_template(build_template_path('tag.html'), articles=articles, tag=tag,orderby='hot')
 
 
-@main.route('/category/<c>/', methods=['GET', 'POST'])
+@main.route('/category/<c>.html', methods=['GET', 'POST'])
 def category(c):
     """
     文章分类列表
@@ -106,7 +108,7 @@ def category(c):
 
     return render_template(build_template_path('category.html'), articles=articles, category=cty,orderby='time')
 
-@main.route('/category/<c>/hot/', methods=['GET', 'POST'])
+@main.route('/category/<c>/hot.html', methods=['GET', 'POST'])
 def category_hot(c):
     page = request.args.get('page', 1, type=int)
     cty = Category.query.filter_by(name=c).first()
@@ -115,7 +117,7 @@ def category_hot(c):
 
     return render_template(build_template_path('category.html'), articles=articles, category=cty,orderby='hot')
 
-@main.route('/comment/add/', methods=['GET', 'POST'])
+@main.route('/comment/add.html', methods=['GET', 'POST'])
 @login_required
 def comment_add():
     form = CommentForm()
@@ -134,7 +136,7 @@ def comment_add():
 
     return jsonify(ret)
 
-@main.route('/archive/',methods=['GET'])
+@main.route('/archive.html',methods=['GET'])
 def archive():
     """
     根据时间归档
@@ -154,7 +156,7 @@ def archive():
         tag['articles'].append(a)
     return render_template(build_template_path('archives.html'),time_tag = time_tag)
 
-@main.route('/search/', methods=['POST'])
+@main.route('/search.html', methods=['POST'])
 def search():
     if not g.search_form.validate_on_submit():
         return redirect(url_for('.index'))
@@ -204,14 +206,14 @@ def sitemap():
 def robots():
     return current_app.config['FLASKBLOG_ROBOTS']
 
-@main.route('/tool/')
+@main.route('/tool.html')
 def tool():
     tools = OnlineTool.query.order_by(OnlineTool.sn.desc()). \
         filter(OnlineTool.state == True).all()
     return render_template(build_template_path('tool.html'),tools = tools)
 
 
-@main.route('/login', methods=['GET', 'POST'])
+@main.route('/login.html', methods=['GET', 'POST'])
 def login():
     login_form = LoginForm(prefix='login')
     if login_form.validate_on_submit():
@@ -229,7 +231,7 @@ def login():
 
     return render_template(build_template_path('login.html'), form=login_form)
 
-@main.route('/regist', methods=['GET', 'POST'])
+@main.route('/regist.html', methods=['GET', 'POST'])
 def regist():
     '''
     注册
@@ -264,7 +266,7 @@ def logout():
     logout_user()
     return redirect(url_for('main.index'))
 
-@main.route('/profile/',methods=['GET'])
+@main.route('/profile.html',methods=['GET'])
 @login_required
 def profile():
     '''个人信息'''
@@ -282,7 +284,7 @@ def password():
         return redirect(url_for('.profile'))
     return render_template(build_template_path('password.html'),form=form)
 
-@main.route('/pay', methods=['GET', 'POST'])
+@main.route('/pay.html', methods=['GET', 'POST'])
 @login_required
 def pay():
     """
@@ -302,7 +304,7 @@ def pay():
     return render_template(build_template_path('pay.html'), qrcode_url=qrcode_url, out_trade_no=out_trade_no)
 
 
-@main.route('/alipay_nofity', methods=['POST'])
+@main.route('/alipay_nofity.html', methods=['POST'])
 @csrf.exempt
 def alipay_nofity():
     data = request.form.to_dict()
@@ -328,7 +330,7 @@ def alipay_nofity():
     print('验证签名失败')
     return '404'
 
-@main.route('/bing_bg')
+@main.route('/bing_bg.html')
 def bing_bg():
     '''
     获取背景地址
